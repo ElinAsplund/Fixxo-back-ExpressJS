@@ -43,7 +43,7 @@ controller.get('/:id', (request, response) => {
 
 controller.put('/:id', (request, response) => {
     if (request.product != undefined){
-        ursers.forEach(product => {
+        products.forEach(product => {
             if (product.id == request.product.id){
                 product.articleNumber = request.body.articleNumber ? request.body.articleNumber : product.articleNumber
                 product.name = request.body.name ? request.body.name : product.name
