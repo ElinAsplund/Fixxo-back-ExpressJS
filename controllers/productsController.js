@@ -42,6 +42,9 @@ controller.get('/:id', (request, response) => {
 })
 
 controller.put('/:id', (request, response) => {
+
+    console.log(request.body.name)
+
     if (request.product != undefined){
         products.forEach(product => {
             if (product.id == request.product.id){
