@@ -1,3 +1,4 @@
+const { request, response } = require('express')
 const express = require('express')
 const controller = express.Router()
 let products = require('../data/simulated_database')
@@ -31,15 +32,16 @@ controller.get('/', (request, response) => {
     response.status(200).json(products)
 })
 
-// http://localhost:5000/api/products/1
-controller.route('/:id')
-.get((request, response) => {
+
+// http://localhost:5000/api/products/:id
+controller.get('/:id', (request, response) => {
     if (request.product != undefined)
         response.status(200).json(request.product)
     else
         response.status(404).json()
 })
-.put((request, response) => {
+
+controller.put('/:id', (request, response) => {
     if (request.product != undefined){
         ursers.forEach(product => {
             if (product.id == request.product.id){
@@ -52,43 +54,19 @@ controller.route('/:id')
                 product.imageName = request.body.imageName ? request.body.imageName : product.imageName
             }
         })
-        response.status(200).json(request.user)
+        response.status(200).json(request.product)
     }
     else
         response.status(404).json()
 })
-.delete((request, response) => {
-    if (request.user != undefined){
+
+controller.delete('/:id', (request, response) => {
+    if (request.product != undefined){
         products = products.filter(product => product.id !== request.product.id)
         response.status(204).json()
-    }
-    else
+    } else{
         response.status(404).json()
+    }
 })
 
 module.exports = controller
-
-
-// export interface Product {
-//     id?: number,
-//     articleNumber: string,
-//     name: string,
-//     description?: string,
-//     category: string,
-//     price: number,
-//     rating: number,
-//     imageName: string,
-//     initialPrice?: number
-//   }
-  
-//   // "NÄR VI SKAPAR EN PRODUKT"?
-//   export interface ProductRequest {
-//     articleNumber: string,
-//     name: string,
-//     description?: string,
-//     category: string,
-//     price: number,
-//     rating: number,
-//     imageName: string,
-//     initialPrice?: number
-//   }
