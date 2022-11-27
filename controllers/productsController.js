@@ -34,6 +34,7 @@ controller.get('/', (request, response) => {
 
 
 // http://localhost:5000/api/products/:id
+// HÄMTA EN PRODUKT
 controller.get('/:id', (request, response) => {
     if (request.product != undefined)
         response.status(200).json(request.product)
@@ -41,6 +42,7 @@ controller.get('/:id', (request, response) => {
         response.status(404).json()
 })
 
+// UPPDATERA EN PRODUKT
 controller.put('/:id', (request, response) => {
 
     console.log(request.body.name)
@@ -63,6 +65,7 @@ controller.put('/:id', (request, response) => {
         response.status(404).json()
 })
 
+// TA BORT EN PRODUKT
 controller.delete('/:id', (request, response) => {
     if (request.product != undefined){
         products = products.filter(product => product.id !== request.product.id)
