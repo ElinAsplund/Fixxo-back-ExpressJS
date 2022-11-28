@@ -44,9 +44,7 @@ controller.get('/:id', (request, response) => {
 
 // UPPDATERA EN PRODUKT
 controller.put('/:id', (request, response) => {
-
-    console.log(request.body.name)
-
+    // console.log(request.product)
     if (request.product != undefined){
         products.forEach(product => {
             if (product.id == request.product.id){
