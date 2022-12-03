@@ -24,7 +24,6 @@ controller.param('id', (req, res, next, id) => {
 
 controller.param('tag', (req, res, next, tag) => {
     req.products = products.filter(product => product.tag == tag)
-    // console.log(req.products);    
     next()
 })
 
