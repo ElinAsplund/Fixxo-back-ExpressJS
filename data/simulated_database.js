@@ -1,6 +1,7 @@
 const products = [
 {
     "id": 1,
+    "tag": "featured",
     "name": "Mordern Black Blouse",
     "category": "Fashion",
     "price": "35",
@@ -8,6 +9,7 @@ const products = [
 },
 {
     "id": 2,
+    "tag": "",
     "name": "Happy Sweatshirt",
     "category": "Basic",
     "price": 25,
@@ -15,6 +17,7 @@ const products = [
 },
 {
     "id": 3,
+    "tag": "featured",
     "name": "Colorful Dress",
     "category": "Fashion",
     "price": "38",
@@ -22,6 +25,7 @@ const products = [
 },
 {
     "id": 4,
+    "tag": "featured",
     "name": "Jeans Jacket",
     "category": "Jackets",
     "price": 45,
@@ -29,6 +33,7 @@ const products = [
 },
 {
     "id": 5,
+    "tag": "",
     "name": "Blue Basic T-shirt",
     "category": "Basic",
     "price": 15,
@@ -36,6 +41,7 @@ const products = [
 },
 {
     "id": 6,
+    "tag": "featured",
     "name": "Pattern Dress",
     "category": "Fashion",
     "price": 40,
@@ -43,6 +49,7 @@ const products = [
 },
 {
     "id": 7,
+    "tag": "featured",
     "name": "Knitted Jumper",
     "category": "Fashion",
     "price": 35,
@@ -50,6 +57,7 @@ const products = [
 },
 {
     "id": 8,
+    "tag": "",
     "name": "Tank Top",
     "category": "Basic",
     "price": 20,
@@ -57,6 +65,7 @@ const products = [
 },
 {
     "id": 9,
+    "tag": "featured",
     "name": "Fine Hoodie",
     "category": "Casual",
     "price": 25,
@@ -64,6 +73,7 @@ const products = [
 },
 {
     "id": 10,
+    "tag": "",
     "name": "Nice Hat",
     "category": "Accessories",
     "price": 15,
@@ -71,6 +81,7 @@ const products = [
 },
 {
     "id": 11,
+    "tag": "featured",
     "name": "Extreme Pattern Shirt",
     "category": "Fashion",
     "price": 35,
@@ -78,6 +89,7 @@ const products = [
 },
 {
     "id": 12,
+    "tag": "featured",
     "name": "Yellow Two Piece Set",
     "category": "Casual",
     "price": 40,
