@@ -1,26 +1,14 @@
-const { request, response } = require('express')
 const express = require('express')
 const controller = express.Router()
 let products = require('../data/simulated_database')
 
-
+// CRUD. CREATE. READ. UPDATE. DELETE.
 // -------------------------------------------------------------------
 // middleware
 controller.param('id', (req, res, next, id) => {
     req.product = products.find(product => product.id == id)
-    
     next()
 })
-
-// controller.param('amount', (req, res, next, amount) => {
-//     req.products = []
-
-//     for (let i = 0; i < amount; i++) {
-//         req.products.push(products[i])
-//     }
-
-//     next()
-// })
 
 controller.param('tag', (req, res, next, tag) => {
     req.products = products.filter(product => product.tag == tag)
@@ -28,12 +16,53 @@ controller.param('tag', (req, res, next, tag) => {
 })
 
 // -------------------------------------------------------------------
-// HÄMTA SPECIFIKT ANTAL PRODUKTER
-// controller.get('/take=:amount', (request, response) => {
-//     response.status(200).json(request.products)
-// })
+// UNSECURED ROUTES
+// -------------------------------------------------------------------
 
-// POST - CREATE - SKAPA EN PRODUKT - http://localhost:5000/api/products
+// READ - GET - HÄMTA ALLA PRODUKTER - http://localhost:5000/api/products
+controller.get('/', (request, response) => {
+    response.status(200).json(products)
+})
+
+// http://localhost:5000/api/products/:id
+// HÄMTA EN SPECIFIK PRODUKT
+controller.get('/details/:id', (request, response) => {
+    if (request.product != undefined)
+        response.status(200).json(request.product)
+    else
+        response.status(404).json()
+})
+
+// http://localhost:5000/api/products/:tag
+// HÄMTA EN SPECIFIK PRODUKT-TAG
+controller.get('/:tag', (request, response) => {
+    if (request.products != undefined)
+        response.status(200).json(request.products)
+    else
+        response.status(404).json()
+})
+
+// http://localhost:5000/api/products/:tag/take=:amount
+// HÄMTA EN SPECIFIK PRODUKT-TAG OCH SPECIFIKT ANTAL
+controller.get('/:tag/take=:amount', (request, response) => {
+    let list=[]
+
+    for (let i = 0; i < Number(request.params.amount); i++) {
+        list.push(request.products[i])
+    }
+
+    if (request.products != undefined)
+        response.status(200).json(list)
+    else
+        response.status(404).json()
+})
+
+
+// -------------------------------------------------------------------
+// SECURED ROUTES
+// -------------------------------------------------------------------
+
+// CREATE - POST - SKAPA EN PRODUKT - http://localhost:5000/api/products
 controller.post('/', (request, response) => {
     let product = {
         id: (products[products.length-1])?.id > 0 ? (products[products.length-1])?.id + 1 : 1,
@@ -50,51 +79,7 @@ controller.post('/', (request, response) => {
     response.status(201).json(product)
 })
 
-// GET - READ - HÄMTA ALLA PRODUKTER - http://localhost:5000/api/products
-controller.get('/', (request, response) => {
-    response.status(200).json(products)
-})
-
-// http://localhost:5000/api/products/take=:amount
-// HÄMTA SPECIFIKT ANTAL PRODUKTER
-controller.get('/take=:amount', (request, response) => {
-    response.status(200).json(request.products)
-})
-
-// http://localhost:5000/api/products/:id
-// HÄMTA EN PRODUKT
-controller.get('/details/:id', (request, response) => {
-    if (request.product != undefined)
-        response.status(200).json(request.product)
-    else
-        response.status(404).json()
-})
-
-// http://localhost:5000/api/products/:tag
-// HÄMTA EN SPECIFIK PRODUKT TAG
-controller.get('/:tag', (request, response) => {
-    if (request.products != undefined)
-        response.status(200).json(request.products)
-    else
-        response.status(404).json()
-})
-
-// http://localhost:5000/api/products/:tag/take=:amount
-// HÄMTA EN SPECIFIK PRODUKT TAG
-controller.get('/:tag/take=:amount', (request, response) => {
-    let list=[]
-
-    for (let i = 0; i < Number(request.params.amount); i++) {
-        list.push(request.products[i])
-    }
-
-    if (request.products != undefined)
-        response.status(200).json(list)
-    else
-        response.status(404).json()
-})
-
-// UPPDATERA EN PRODUKT
+// UPDATE - PUT - UPPDATERA EN PRODUKT
 controller.put('/details/:id', (request, response) => {
     // console.log(request.product)
     if (request.product != undefined){
@@ -115,7 +100,7 @@ controller.put('/details/:id', (request, response) => {
         response.status(404).json()
 })
 
-// TA BORT EN PRODUKT
+// DELETE - DELETE - TA BORT EN PRODUKT
 controller.delete('/details/:id', (request, response) => {
     if (request.product != undefined){
         products = products.filter(product => product.id !== request.product.id)
@@ -126,3 +111,25 @@ controller.delete('/details/:id', (request, response) => {
 })
 
 module.exports = controller
+
+
+
+// -------------------------------------------------------------------
+// "GAMMALT"
+// -------------------------------------------------------------------
+
+// HÄMTA SPECIFIKT ANTAL PRODUKTER
+// (middleware)
+// controller.param('amount', (req, res, next, amount) => {
+//     req.products = []
+
+//     for (let i = 0; i < amount; i++) {
+//         req.products.push(products[i])
+//     }
+
+//     next()
+// })
+// (controller)
+// controller.get('/take=:amount', (request, response) => {
+//     response.status(200).json(request.products)
+// })
