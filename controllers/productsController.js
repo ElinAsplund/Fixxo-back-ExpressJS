@@ -1,5 +1,6 @@
 const express = require('express')
 const controller = express.Router()
+const ProductSchema = require('../schemas/productSchema')
 let products = require('../data/simulated_database')
 
 // CRUD. CREATE. READ. UPDATE. DELETE.
@@ -20,42 +21,78 @@ controller.param('tag', (req, res, next, tag) => {
 // -------------------------------------------------------------------
 
 // READ - GET - HÄMTA ALLA PRODUKTER - http://localhost:5000/api/products
-controller.get('/', (request, response) => {
-    response.status(200).json(products)
+controller.get('/', async (req, res) => {
+    try{
+        res.status(200).json(await ProductSchema.find())
+        // const products = await ProductSchema.find()
+        // res.status(200).json(products)
+    } catch{
+        res.status(400).json()
+    }
 })
 
+// controller.get('/', (request, response) => {
+//     response.status(200).json(products)
+// })
+
+// ||||||||||||||||||||||||||||||||||||||||
 // http://localhost:5000/api/products/:id
 // HÄMTA EN SPECIFIK PRODUKT
-controller.get('/details/:id', (request, response) => {
-    if (request.product != undefined)
-        response.status(200).json(request.product)
+controller.get('/details/:id', async (req, res) => {
+    const product = await ProductSchema.findById(req.params.id)
+    if(product)
+        res.status(200).json(product)
     else
-        response.status(404).json()
+        res.status(404).json()
 })
+// controller.get('/details/:id', (request, response) => {
+//     if (request.product != undefined)
+//     response.status(200).json(request.product)
+//     else
+//     response.status(404).json()
+// })
 
+// ||||||||||||||||||||||||||||||||||||||||
 // http://localhost:5000/api/products/:tag
 // HÄMTA EN SPECIFIK PRODUKT-TAG
-controller.get('/:tag', (request, response) => {
-    if (request.products != undefined)
-        response.status(200).json(request.products)
+controller.get('/:tag', async (req, res) => {
+    const products = await ProductSchema.find({ tag: req.params.tag })
+    if(products)
+        res.status(200).json(products)
     else
-        response.status(404).json()
+        res.status(400).json()
 })
 
+// controller.get('/:tag', (request, response) => {
+//     if (request.products != undefined)
+//     response.status(200).json(request.products)
+//     else
+//     response.status(404).json()
+// })
+
+// ||||||||||||||||||||||||||||||||||||||||
 // http://localhost:5000/api/products/:tag/take=:amount
 // HÄMTA EN SPECIFIK PRODUKT-TAG OCH SPECIFIKT ANTAL
-controller.get('/:tag/take=:amount', (request, response) => {
-    let list=[]
-
-    for (let i = 0; i < Number(request.params.amount); i++) {
-        list.push(request.products[i])
-    }
-
-    if (request.products != undefined)
-        response.status(200).json(list)
+controller.get('/:tag/take=:amount', async (req, res) => {
+    const products = await ProductSchema.find({ tag: req.params.tag }).limit(req.params.amount)
+    if(products)
+        res.status(200).json(products)
     else
-        response.status(404).json()
+        res.status(400).json()
 })
+
+// controller.get('/:tag/take=:amount', (request, response) => {
+//     let list=[]
+
+//     for (let i = 0; i < Number(request.params.amount); i++) {
+//         list.push(request.products[i])
+//     }
+
+//     if (request.products != undefined)
+//         response.status(200).json(list)
+//     else
+//         response.status(404).json()
+// })
 
 
 // -------------------------------------------------------------------
