@@ -1,11 +1,10 @@
 const express = require('express')
 const controller = express.Router()
-const ProductSchema = require('../schemas/productSchema')
+const productSchema = require('../schemas/productSchema')
 let products = require('../data/simulated_database')
 
-// CRUD. CREATE. READ. UPDATE. DELETE.
+// MIDDLEWARE
 // -------------------------------------------------------------------
-// middleware
 controller.param('id', (req, res, next, id) => {
     req.product = products.find(product => product.id == id)
     next()
@@ -16,14 +15,16 @@ controller.param('tag', (req, res, next, tag) => {
     next()
 })
 
+// CRUD: CREATE. READ. UPDATE. DELETE.
 // -------------------------------------------------------------------
+
 // UNSECURED ROUTES
 // -------------------------------------------------------------------
 
-// READ - GET - HÄMTA ALLA PRODUKTER - http://localhost:5000/api/products
+// READ - GET 
 controller.get('/', async (req, res) => {
     const products = []
-    const list = await ProductSchema.find()
+    const list = await productSchema.find()
     if(list){
         for(let product of list){
             products.push({
@@ -40,15 +41,9 @@ controller.get('/', async (req, res) => {
         res.status(400).json()
 })
 
-// controller.get('/', (request, response) => {
-//     response.status(200).json(products)
-// })
-
-// ||||||||||||||||||||||||||||||||||||||||
-// http://localhost:5000/api/products/:id
-// HÄMTA EN SPECIFIK PRODUKT
+// READ - GET 
 controller.get('/details/:id', async (req, res) => {
-    const product = await ProductSchema.findById(req.params.id)
+    const product = await productSchema.findById(req.params.id)
     if(product){
         res.status(200).json({
             id: product._id,
@@ -61,19 +56,11 @@ controller.get('/details/:id', async (req, res) => {
     } else
         res.status(404).json()
 })
-// controller.get('/details/:id', (request, response) => {
-//     if (request.product != undefined)
-//     response.status(200).json(request.product)
-//     else
-//     response.status(404).json()
-// })
 
-// ||||||||||||||||||||||||||||||||||||||||
-// http://localhost:5000/api/products/:tag
-// HÄMTA EN SPECIFIK PRODUKT-TAG
+// READ - GET 
 controller.get('/:tag', async (req, res) => {
     const products = []
-    const list = await ProductSchema.find({ tag: req.params.tag })
+    const list = await productSchema.find({ tag: req.params.tag })
     if(list){
         for(let product of list){
             products.push({
@@ -90,72 +77,58 @@ controller.get('/:tag', async (req, res) => {
         res.status(400).json()
 })
 
-// controller.get('/:tag', (request, response) => {
-//     if (request.products != undefined)
-//     response.status(200).json(request.products)
-//     else
-//     response.status(404).json()
-// })
-
-// ||||||||||||||||||||||||||||||||||||||||
-// http://localhost:5000/api/products/:tag/take=:amount
-// HÄMTA EN SPECIFIK PRODUKT-TAG OCH SPECIFIKT ANTAL
+// READ - GET 
 controller.get('/:tag/take=:amount', async (req, res) => {
     const products = []
-    const list = await ProductSchema.find({ tag: req.params.tag }).limit(req.params.amount)
-    if(list)
+    const list = await productSchema.find({ tag: req.params.tag }).limit(req.params.amount)
+    if(list){
         for(let product of list){
             products.push({
-            id: product._id,
-            tag: product.tag,
-            name: product.name,
-            category: product.category,
-            price: product.price,
-            imageName: product.imageName
-        })
+                id: product._id,
+                tag: product.tag,
+                name: product.name,
+                category: product.category,
+                price: product.price,
+                imageName: product.imageName
+            })
+        }   
         res.status(200).json(products)
     } else
         res.status(400).json()
 })
 
-// controller.get('/:tag/take=:amount', (request, response) => {
-//     let list=[]
-
-//     for (let i = 0; i < Number(request.params.amount); i++) {
-//         list.push(request.products[i])
-//     }
-
-//     if (request.products != undefined)
-//         response.status(200).json(list)
-//     else
-//         response.status(404).json()
-// })
-
-
 // -------------------------------------------------------------------
+
 // SECURED ROUTES
 // -------------------------------------------------------------------
 
-// CREATE - POST - SKAPA EN PRODUKT - http://localhost:5000/api/products
-controller.post('/', (request, response) => {
-    let product = {
-        id: (products[products.length-1])?.id > 0 ? (products[products.length-1])?.id + 1 : 1,
-        articleNumber: request.body.articleNumber,
-        name: request.body.name,
-        description: request.body.description,
-        category: request.body.category,
-        price: request.body.price,
-        rating: request.body.rating,
-        imageName: request.body.imageName
-    }
+// CREATE - POST 
+controller.post('/', async (req, res) => {
+    const { tag, name, category, price, imageName } = req.body
 
-    products.push(product)
-    response.status(201).json(product)
+    if( !name || !price )
+        res.status(400).json({text: 'name and price are required.'})
+
+    const product_exists = await productSchema.findOne({name})
+    if(product_exists)
+        res.status(409).json({text: 'a product with the same name already exists'})
+    else{
+        const product = await productSchema.create({
+            tag,
+            name,
+            category,
+            price,
+            imageName
+        })
+        if(product)
+            res.status(201).json({text: `the product with article number ${product._id} was created successfully.`})
+        else
+            res.status(400).json({text: 'something went wrong, we could not create the product.'})
+    }
 })
 
-// UPDATE - PUT - UPPDATERA EN PRODUKT
+// UPDATE - PUT
 controller.put('/details/:id', (request, response) => {
-    // console.log(request.product)
     if (request.product != undefined){
         products.forEach(product => {
             if (product.id == request.product.id){
@@ -174,36 +147,19 @@ controller.put('/details/:id', (request, response) => {
         response.status(404).json()
 })
 
-// DELETE - DELETE - TA BORT EN PRODUKT
-controller.delete('/details/:id', (request, response) => {
-    if (request.product != undefined){
-        products = products.filter(product => product.id !== request.product.id)
-        response.status(204).json()
-    } else{
-        response.status(404).json()
+// DELETE - DELETE 
+controller.delete('/details/:id', async (req, res) => {
+    if(!req.params.id)
+        res.status(400).json('no article number was specified.')
+    else{
+        const product = await productSchema.findById(req.params.id)
+        if(product){
+            await productSchema.remove(product)
+            res.status(200).json({text: `the product with article number ${req.params.id} was deleted successfully.`})
+        } else{
+            res.status(404).json({text: `the product with article number ${req.params.id} was not found.`})
+        }
     }
 })
 
 module.exports = controller
-
-
-
-// -------------------------------------------------------------------
-// "GAMMALT"
-// -------------------------------------------------------------------
-
-// HÄMTA SPECIFIKT ANTAL PRODUKTER
-// (middleware)
-// controller.param('amount', (req, res, next, amount) => {
-//     req.products = []
-
-//     for (let i = 0; i < amount; i++) {
-//         req.products.push(products[i])
-//     }
-
-//     next()
-// })
-// (controller)
-// controller.get('/take=:amount', (request, response) => {
-//     response.status(200).json(request.products)
-// })
