@@ -22,13 +22,22 @@ controller.param('tag', (req, res, next, tag) => {
 
 // READ - GET - HÄMTA ALLA PRODUKTER - http://localhost:5000/api/products
 controller.get('/', async (req, res) => {
-    try{
-        res.status(200).json(await ProductSchema.find())
-        // const products = await ProductSchema.find()
-        // res.status(200).json(products)
-    } catch{
+    const products = []
+    const list = await ProductSchema.find()
+    if(list){
+        for(let product of list){
+            products.push({
+                id: product._id,
+                tag: product.tag,
+                name: product.name,
+                category: product.category,
+                price: product.price,
+                imageName: product.imageName
+            })
+        }
+        res.status(200).json(products)
+    } else
         res.status(400).json()
-    }
 })
 
 // controller.get('/', (request, response) => {
@@ -40,9 +49,16 @@ controller.get('/', async (req, res) => {
 // HÄMTA EN SPECIFIK PRODUKT
 controller.get('/details/:id', async (req, res) => {
     const product = await ProductSchema.findById(req.params.id)
-    if(product)
-        res.status(200).json(product)
-    else
+    if(product){
+        res.status(200).json({
+            id: product._id,
+            tag: product.tag,
+            name: product.name,
+            category: product.category,
+            price: product.price,
+            imageName: product.imageName            
+        })
+    } else
         res.status(404).json()
 })
 // controller.get('/details/:id', (request, response) => {
@@ -56,10 +72,21 @@ controller.get('/details/:id', async (req, res) => {
 // http://localhost:5000/api/products/:tag
 // HÄMTA EN SPECIFIK PRODUKT-TAG
 controller.get('/:tag', async (req, res) => {
-    const products = await ProductSchema.find({ tag: req.params.tag })
-    if(products)
+    const products = []
+    const list = await ProductSchema.find({ tag: req.params.tag })
+    if(list){
+        for(let product of list){
+            products.push({
+                id: product._id,
+                tag: product.tag,
+                name: product.name,
+                category: product.category,
+                price: product.price,
+                imageName: product.imageName
+            })
+        }
         res.status(200).json(products)
-    else
+    } else
         res.status(400).json()
 })
 
@@ -74,10 +101,20 @@ controller.get('/:tag', async (req, res) => {
 // http://localhost:5000/api/products/:tag/take=:amount
 // HÄMTA EN SPECIFIK PRODUKT-TAG OCH SPECIFIKT ANTAL
 controller.get('/:tag/take=:amount', async (req, res) => {
-    const products = await ProductSchema.find({ tag: req.params.tag }).limit(req.params.amount)
-    if(products)
+    const products = []
+    const list = await ProductSchema.find({ tag: req.params.tag }).limit(req.params.amount)
+    if(list)
+        for(let product of list){
+            products.push({
+            id: product._id,
+            tag: product.tag,
+            name: product.name,
+            category: product.category,
+            price: product.price,
+            imageName: product.imageName
+        })
         res.status(200).json(products)
-    else
+    } else
         res.status(400).json()
 })
 
