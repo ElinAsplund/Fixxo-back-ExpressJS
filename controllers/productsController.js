@@ -2,6 +2,7 @@ const express = require('express')
 const controller = express.Router()
 const productSchema = require('../schemas/productSchema')
 let products = require('../data/simulated_database')
+const { authorize } = require('../middlewares/authorization')
 
 // MIDDLEWARE
 // -------------------------------------------------------------------
@@ -103,6 +104,7 @@ controller.get('/:tag/take=:amount', async (req, res) => {
 // -------------------------------------------------------------------
 
 // CREATE - POST 
+// controller.post('/', authorize, async (req, res) => {
 controller.post('/', async (req, res) => {
     const { tag, name, category, price, imageName } = req.body
 
@@ -128,22 +130,29 @@ controller.post('/', async (req, res) => {
 })
 
 // UPDATE - PUT
+// controller.put('/details/:id', authorize, async (req, res) => {
 controller.put('/details/:id', async (req, res) => {
     const id = req.params.id
     const updates = req.body
+    // {
+    //     name: req.body.name,
+    //     tag: req.body.tag,
+    //     category: req.body.category,
+    //     price: req.body.price,
+    //     imageName: req.body.imageName
+    // }
     const options = { new: true }
 
     const product = await productSchema.findByIdAndUpdate(id, updates, options)
 
     if(product)
         res.status(200).json(product)
-        // res.status(200).json({text: `the product with article number ${req.params.id} updated. tag: ${product.tag} name: ${product.name} category: ${product.category} price: ${product.price} imageName: ${product.imageName}`})
-        // res.status(200).json(product, {text: `the product with article number ${req.params.id} updated.`})
     else
         res.status(404).json({text: `the product with article number ${req.params.id} was not found.`})
 })
 
-// DELETE - DELETE 
+// DELETE - DELETE  
+// controller.delete('/details/:id', authorize, async (req, res) => {
 controller.delete('/details/:id', async (req, res) => {
     if(!req.params.id)
         res.status(400).json('no article number was specified.')
@@ -155,7 +164,7 @@ controller.delete('/details/:id', async (req, res) => {
         } else{
             res.status(404).json({text: `the product with article number ${req.params.id} was not found.`})
         }
-    }
+    } 
 })
 
 module.exports = controller
