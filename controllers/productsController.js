@@ -128,23 +128,19 @@ controller.post('/', async (req, res) => {
 })
 
 // UPDATE - PUT
-controller.put('/details/:id', (request, response) => {
-    if (request.product != undefined){
-        products.forEach(product => {
-            if (product.id == request.product.id){
-                product.articleNumber = request.body.articleNumber ? request.body.articleNumber : product.articleNumber
-                product.name = request.body.name ? request.body.name : product.name
-                product.description = request.body.description ? request.body.description : product.description
-                product.category = request.body.category ? request.body.category : product.category
-                product.price = request.body.price ? request.body.price : product.price
-                product.rating = request.body.rating ? request.body.rating : product.rating
-                product.imageName = request.body.imageName ? request.body.imageName : product.imageName
-            }
-        })
-        response.status(200).json(request.product)
-    }
+controller.put('/details/:id', async (req, res) => {
+    const id = req.params.id
+    const updates = req.body
+    const options = { new: true }
+
+    const product = await productSchema.findByIdAndUpdate(id, updates, options)
+
+    if(product)
+        res.status(200).json(product)
+        // res.status(200).json({text: `the product with article number ${req.params.id} updated. tag: ${product.tag} name: ${product.name} category: ${product.category} price: ${product.price} imageName: ${product.imageName}`})
+        // res.status(200).json(product, {text: `the product with article number ${req.params.id} updated.`})
     else
-        response.status(404).json()
+        res.status(404).json({text: `the product with article number ${req.params.id} was not found.`})
 })
 
 // DELETE - DELETE 
