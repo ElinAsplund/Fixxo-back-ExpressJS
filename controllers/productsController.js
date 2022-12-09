@@ -104,8 +104,8 @@ controller.get('/:tag/take=:amount', async (req, res) => {
 // -------------------------------------------------------------------
 
 // CREATE - POST 
-// controller.post('/', authorize, async (req, res) => {
-controller.post('/', async (req, res) => {
+controller.post('/', authorize, async (req, res) => {
+// controller.post('/', async (req, res) => {
     const { tag, name, category, price, imageName } = req.body
 
     if( !name || !price )
@@ -130,8 +130,8 @@ controller.post('/', async (req, res) => {
 })
 
 // UPDATE - PUT
-// controller.put('/details/:id', authorize, async (req, res) => {
-controller.put('/details/:id', async (req, res) => {
+controller.put('/details/:id', authorize, async (req, res) => {
+// controller.put('/details/:id', async (req, res) => {
     const id = req.params.id
     const updates = req.body
     // {
@@ -152,8 +152,8 @@ controller.put('/details/:id', async (req, res) => {
 })
 
 // DELETE - DELETE  
-// controller.delete('/details/:id', authorize, async (req, res) => {
-controller.delete('/details/:id', async (req, res) => {
+controller.delete('/details/:id', authorize, async (req, res) => {
+// controller.delete('/details/:id', async (req, res) => {
     if(!req.params.id)
         res.status(400).json('no article number was specified.')
     else{

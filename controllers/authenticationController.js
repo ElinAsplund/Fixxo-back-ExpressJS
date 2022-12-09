@@ -39,15 +39,16 @@ controller.route('/login').post(async(req, res)=>{
     const { email, password } = req.body
 
     if(!email || !password)
-        res.status(400).json({text: 'email and password are required.'})
-
-    const user = await userSchema.findOne({email})
-    if(user && await bcrypt.compare(password, user.password)){
-        res.status(200).json({
-            accessToken: generateAccessToken(user._id)
-        })
-    } else {
-        res.status(400).json({text: `incorrect email or password.`})
+        return res.status(400).json({text: 'email and password are required.'})
+    else{
+        const user = await userSchema.findOne({email})
+        if(user && await bcrypt.compare(password, user.password)){
+            res.status(200).json({
+                accessToken: generateAccessToken(user._id)
+            })
+        } else {
+            res.status(400).json({text: `incorrect email or password.`})
+        }
     }
 })
 
