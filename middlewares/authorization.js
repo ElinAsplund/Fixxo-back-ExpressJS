@@ -13,10 +13,10 @@ const authorize = (req, res, next) => {
             const decodedAccessToken = jwt.verify(accessToken, process.env.JWT_SECRET)
             next()
         } catch {
-            res.status(401).json()
+            res.status(401).json({text: `Your are not allowed to do that. Unauthorized.`})
         }
     } else {
-        res.status(401).json()
+        res.status(401).json({text: `Your are not allowed to do that. Unauthorized.`})
     }
 }
 

@@ -109,11 +109,11 @@ controller.post('/', authorize, async (req, res) => {
     const { tag, name, category, price, imageName } = req.body
 
     if( !name || !price )
-        res.status(400).json({text: 'name and price are required.'})
+        res.status(400).json({text: 'Name and price are required.'})
 
     const product_exists = await productSchema.findOne({name})
     if(product_exists)
-        res.status(409).json({text: 'a product with the same name already exists'})
+        res.status(409).json({text: 'A product with the same name already exists'})
     else{
         const product = await productSchema.create({
             tag,
@@ -123,9 +123,9 @@ controller.post('/', authorize, async (req, res) => {
             imageName
         })
         if(product)
-            res.status(201).json({text: `the product with article number ${product._id} was created successfully.`})
+            res.status(201).json({text: `The product with article number ${product._id} was created successfully.`})
         else
-            res.status(400).json({text: 'something went wrong, we could not create the product.'})
+            res.status(400).json({text: 'Something went wrong, we could not create the product.'})
     }
 })
 
@@ -148,21 +148,21 @@ controller.put('/details/:id', authorize, async (req, res) => {
     if(product)
         res.status(200).json(product)
     else
-        res.status(404).json({text: `the product with article number ${req.params.id} was not found.`})
+        res.status(404).json({text: `The product with article number ${req.params.id} was not found.`})
 })
 
 // DELETE - DELETE  
 controller.delete('/details/:id', authorize, async (req, res) => {
 // controller.delete('/details/:id', async (req, res) => {
     if(!req.params.id)
-        res.status(400).json('no article number was specified.')
+        res.status(400).json('No article number was specified.')
     else{
         const product = await productSchema.findById(req.params.id)
         if(product){
             await productSchema.remove(product)
-            res.status(200).json({text: `the product with article number ${req.params.id} was deleted successfully.`})
+            res.status(200).json({text: `The product with article number ${req.params.id} was deleted successfully.`})
         } else{
-            res.status(404).json({text: `the product with article number ${req.params.id} was not found.`})
+            res.status(404).json({text: `The product with article number ${req.params.id} was not found.`})
         }
     } 
 })
