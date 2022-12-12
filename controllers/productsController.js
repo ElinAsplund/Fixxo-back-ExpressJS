@@ -141,6 +141,7 @@ controller.put('/details/:id', authorize, async (req, res) => {
     //     price: req.body.price,
     //     imageName: req.body.imageName
     // }
+    
     const options = { new: true }
 
     const product = await productSchema.findByIdAndUpdate(id, updates, options)
