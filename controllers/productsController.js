@@ -133,14 +133,13 @@ controller.post('/', authorize, async (req, res) => {
 controller.put('/details/:id', authorize, async (req, res) => {
 // controller.put('/details/:id', async (req, res) => {
     const id = req.params.id
-    const updates = req.body
-    // {
-    //     name: req.body.name,
-    //     tag: req.body.tag,
-    //     category: req.body.category,
-    //     price: req.body.price,
-    //     imageName: req.body.imageName
-    // }
+    const updates = {
+        name: req.body.name,
+        tag: req.body.tag,
+        category: req.body.category,
+        price: req.body.price,
+        imageName: req.body.imageName
+    }
     
     const options = { new: true }
 
