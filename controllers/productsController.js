@@ -110,22 +110,23 @@ controller.post('/', authorize, async (req, res) => {
 
     if( !name || !price )
         res.status(400).json({text: 'Name and price are required.'})
-
-    const product_exists = await productSchema.findOne({name})
-    if(product_exists)
-        res.status(409).json({text: 'A product with the same name already exists'})
     else{
-        const product = await productSchema.create({
-            tag,
-            name,
-            category,
-            price,
-            imageName
-        })
-        if(product)
-            res.status(201).json({text: `The product with article number ${product._id} was created successfully.`})
-        else
-            res.status(400).json({text: 'Something went wrong, we could not create the product.'})
+        const product_exists = await productSchema.findOne({name})
+        if(product_exists)
+            res.status(409).json({text: 'A product with the same name already exists'})
+        else{
+            const product = await productSchema.create({
+                tag,
+                name,
+                category,
+                price,
+                imageName
+            })
+            if(product)
+                res.status(201).json({text: `The product with article number ${product._id} was created successfully.`})
+            else
+                res.status(400).json({text: 'Something went wrong, we could not create the product.'})
+        }
     }
 })
 
@@ -133,8 +134,8 @@ controller.post('/', authorize, async (req, res) => {
 controller.put('/details/:id', authorize, async (req, res) => {
 // controller.put('/details/:id', async (req, res) => {
     const id = req.params.id
-    const updates = req.body
-    // Now I get double id's! But if I don't use req.body, I get params id undefined if I use update product-form multiple times!:
+    const updates =  req.body
+    // With req.body I get double id's in mongoDB! But if I don't use req.body, I get params id undefined if I use update product-form multiple times! hmf. :
     // {
     //     name: req.body.name,
     //     tag: req.body.tag,
