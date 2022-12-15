@@ -1,6 +1,6 @@
 const express = require('express')
 const controller = express.Router()
-const productSchema = require('../schemas/productSchema')
+const productSchema = require('../schemas/mongoDB/productSchema')
 let products = require('../data/simulated_database')
 const { authorize } = require('../middlewares/authorization')
 

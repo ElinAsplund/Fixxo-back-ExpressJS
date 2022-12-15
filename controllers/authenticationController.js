@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs')
 const express = require('express')
 const controller = express.Router()
 
-const userSchema = require('../schemas/userSchema')
+const userSchema = require('../schemas/mongoDB/userSchema')
 const { generateAccessToken } = require('../middlewares/authorization')
 
 // UNSECURED ROUTES
