@@ -1,8 +1,6 @@
 const bcrypt = require('bcryptjs')
-// const jwt = require('jsonwebtoken')
 const express = require('express')
 const controller = express.Router()
-
 const userSchema = require('../schemas/mongoDB/userSchema')
 const { generateAccessToken } = require('../middlewares/authorization')
 
@@ -13,12 +11,11 @@ controller.route('/register').post(async(req, res)=>{
 
     if(!firstName || !lastName || !email || !password){
         res.status(400).json({text: 'First name, last name, email and password are required.'})
-    } 
-    else {
+    } else {
         const user_exists = await userSchema.findOne({email})
         if(user_exists)
             res.status(409).json({text: 'A user with the same email already exists.'})
-        else{
+        else {
             const salt = await bcrypt.genSalt(10)
             const hashedPassword = await bcrypt.hash(password, salt)
     
@@ -42,7 +39,7 @@ controller.route('/login').post(async(req, res)=>{
 
     if(!email || !password)
         return res.status(400).json({text: 'Email and password are required.'})
-    else{
+    else {
         const user = await userSchema.findOne({email})
         if(user && await bcrypt.compare(password, user.password)){
             res.status(200).json({
@@ -53,8 +50,5 @@ controller.route('/login').post(async(req, res)=>{
         }
     }
 })
-
-// SECURED ROUTES
-// -------------------------------------------------------------------
 
 module.exports = controller

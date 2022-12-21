@@ -18,12 +18,7 @@ app.use('/graphql', graphqlHTTP({
     schema: require('./schemas/graphQL/graphqlSchema'),
     graphiql: true
 }))
-
 app.use('/api/products', require('./controllers/productsController'))
-// =
-// const productsController = require('./controllers/productsController')
-// app.use('/api/products', productsController)
-
 app.use('/api/authentication', require('./controllers/authenticationController'))
 
 // init

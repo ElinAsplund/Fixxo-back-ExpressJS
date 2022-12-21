@@ -18,7 +18,6 @@ controller.param('tag', (req, res, next, tag) => {
 
 // CRUD: CREATE. READ. UPDATE. DELETE.
 // -------------------------------------------------------------------
-
 // UNSECURED ROUTES
 // -------------------------------------------------------------------
 
@@ -99,13 +98,11 @@ controller.get('/:tag/take=:amount', async (req, res) => {
 })
 
 // -------------------------------------------------------------------
-
 // SECURED ROUTES
 // -------------------------------------------------------------------
 
 // CREATE - POST 
 controller.post('/', authorize, async (req, res) => {
-// controller.post('/', async (req, res) => {
     const { tag, name, category, price, imageName } = req.body
 
     if( !name || !price )
@@ -132,10 +129,10 @@ controller.post('/', authorize, async (req, res) => {
 
 // UPDATE - PUT
 controller.put('/details/:id', authorize, async (req, res) => {
-// controller.put('/details/:id', async (req, res) => {
     const id = req.params.id
     const updates =  req.body
-    // With req.body I get double id's in mongoDB! But if I don't use req.body, I get params id undefined if I use update product-form multiple times! hmf. :
+    // With req.body I get double id's in mongoDB! 
+    // But if I don't use req.body, I get params.id==undefined if I use update product-form multiple times! hmf.
     // {
     //     name: req.body.name,
     //     tag: req.body.tag,
@@ -156,7 +153,6 @@ controller.put('/details/:id', authorize, async (req, res) => {
 
 // DELETE - DELETE  
 controller.delete('/details/:id', authorize, async (req, res) => {
-// controller.delete('/details/:id', async (req, res) => {
     if(!req.params.id)
         res.status(400).json('No article number was specified.')
     else{
@@ -164,7 +160,7 @@ controller.delete('/details/:id', authorize, async (req, res) => {
         if(product){
             await productSchema.remove(product)
             res.status(200).json({text: `The product with article number ${req.params.id} was deleted successfully.`})
-        } else{
+        } else {
             res.status(404).json({text: `The product with article number ${req.params.id} was not found.`})
         }
     } 
