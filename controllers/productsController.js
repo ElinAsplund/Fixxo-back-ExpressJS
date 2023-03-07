@@ -1,7 +1,7 @@
 const express = require('express')
 const controller = express.Router()
 const productSchema = require('../schemas/mongoDB/productSchema')
-let products = require('../data/simulated_database')
+let products = []
 const { authorize } = require('../middlewares/authorization')
 
 // MIDDLEWARE
@@ -25,8 +25,8 @@ controller.param('tag', (req, res, next, tag) => {
 controller.get('/', async (req, res) => {
     const products = []
     const list = await productSchema.find()
-    if(list){
-        for(let product of list){
+    if (list) {
+        for (let product of list) {
             products.push({
                 id: product._id,
                 tag: product.tag,
@@ -44,14 +44,14 @@ controller.get('/', async (req, res) => {
 // READ - GET 
 controller.get('/details/:id', async (req, res) => {
     const product = await productSchema.findById(req.params.id)
-    if(product){
+    if (product) {
         res.status(200).json({
             id: product._id,
             tag: product.tag,
             name: product.name,
             category: product.category,
             price: product.price,
-            imageName: product.imageName            
+            imageName: product.imageName
         })
     } else
         res.status(404).json()
@@ -61,8 +61,8 @@ controller.get('/details/:id', async (req, res) => {
 controller.get('/:tag', async (req, res) => {
     const products = []
     const list = await productSchema.find({ tag: req.params.tag })
-    if(list){
-        for(let product of list){
+    if (list) {
+        for (let product of list) {
             products.push({
                 id: product._id,
                 tag: product.tag,
@@ -81,8 +81,8 @@ controller.get('/:tag', async (req, res) => {
 controller.get('/:tag/take=:amount', async (req, res) => {
     const products = []
     const list = await productSchema.find({ tag: req.params.tag }).limit(req.params.amount)
-    if(list){
-        for(let product of list){
+    if (list) {
+        for (let product of list) {
             products.push({
                 id: product._id,
                 tag: product.tag,
@@ -91,7 +91,7 @@ controller.get('/:tag/take=:amount', async (req, res) => {
                 price: product.price,
                 imageName: product.imageName
             })
-        }   
+        }
         res.status(200).json(products)
     } else
         res.status(400).json()
@@ -105,13 +105,13 @@ controller.get('/:tag/take=:amount', async (req, res) => {
 controller.post('/', authorize, async (req, res) => {
     const { tag, name, category, price, imageName } = req.body
 
-    if( !name || !price )
-        res.status(400).json({text: 'Name and price are required.'})
-    else{
-        const product_exists = await productSchema.findOne({name})
-        if(product_exists)
-            res.status(409).json({text: 'A product with the same name already exists'})
-        else{
+    if (!name || !price)
+        res.status(400).json({ text: 'Name and price are required.' })
+    else {
+        const product_exists = await productSchema.findOne({ name })
+        if (product_exists)
+            res.status(409).json({ text: 'A product with the same name already exists' })
+        else {
             const product = await productSchema.create({
                 tag,
                 name,
@@ -119,10 +119,10 @@ controller.post('/', authorize, async (req, res) => {
                 price,
                 imageName
             })
-            if(product)
-                res.status(201).json({text: `The product with article number ${product._id} was created successfully.`})
+            if (product)
+                res.status(201).json({ text: `The product with article number ${product._id} was created successfully.` })
             else
-                res.status(400).json({text: 'Something went wrong, we could not create the product.'})
+                res.status(400).json({ text: 'Something went wrong, we could not create the product.' })
         }
     }
 })
@@ -130,7 +130,7 @@ controller.post('/', authorize, async (req, res) => {
 // UPDATE - PUT
 controller.put('/details/:id', authorize, async (req, res) => {
     const id = req.params.id
-    const updates =  req.body
+    const updates = req.body
     // With req.body I get double id's in mongoDB! 
     // But if I don't use req.body, I get params.id==undefined if I use update product-form multiple times! hmf.
     // {
@@ -140,30 +140,30 @@ controller.put('/details/:id', authorize, async (req, res) => {
     //     price: req.body.price,
     //     imageName: req.body.imageName
     // }
-    
+
     const options = { new: true }
 
     const product = await productSchema.findByIdAndUpdate(id, updates, options)
 
-    if(product)
+    if (product)
         res.status(200).json(product)
     else
-        res.status(404).json({text: `The product with article number ${req.params.id} was not found.`})
+        res.status(404).json({ text: `The product with article number ${req.params.id} was not found.` })
 })
 
 // DELETE - DELETE  
 controller.delete('/details/:id', authorize, async (req, res) => {
-    if(!req.params.id)
+    if (!req.params.id)
         res.status(400).json('No article number was specified.')
-    else{
+    else {
         const product = await productSchema.findById(req.params.id)
-        if(product){
+        if (product) {
             await productSchema.remove(product)
-            res.status(200).json({text: `The product with article number ${req.params.id} was deleted successfully.`})
+            res.status(200).json({ text: `The product with article number ${req.params.id} was deleted successfully.` })
         } else {
-            res.status(404).json({text: `The product with article number ${req.params.id} was not found.`})
+            res.status(404).json({ text: `The product with article number ${req.params.id} was not found.` })
         }
-    } 
+    }
 })
 
 module.exports = controller
